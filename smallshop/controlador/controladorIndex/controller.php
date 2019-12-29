@@ -7,14 +7,10 @@ include("functions.php");
 session_name("sesionUsuario");
 session_start();
 
-//////////////////////
-
 $showMenuLogin = "";
 $showMenuAdministrator = "";
 $showBoxWarning = "";
 $showErrorLogin = "";
-
-//echo $_SESSION["username"];
 
 if (isset($_SESSION["username"])) {
     $showMenuLogin = showLoginRegisterLogout($_SESSION["username"]);
@@ -146,44 +142,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
         }
 
-        /*if (empty($_POST["usernameLogin"])) {
-            $errorUsername = "Campo requerido.";
-        } else {
-            if (!preg_match("/^[a-zA-Z0-9]*$/", $_POST["usernameLogin"])) {
-                $errorUsername = "<p class=\"text-danger\">Formato no correcto. Solo números y letras sin espacios</p>";
-            } else {
-                $username = test_input($_POST["usernameLogin"]);
-            }
-        }*/
-
-        /*if (empty($_POST["passwordLogin"])) {
-            $errorPassword = "Campo requerido.";
-        } else {
-            if (!preg_match("/^[a-zA-Z0-9]*$/", $_POST["passwordLogin"])) {
-                $errorPassword = "Formato no correcto. Solo números y letras sin espacios.";
-            } else {
-                $password = test_input($_POST["passwordLogin"]);
-            }
-        }*/
-
         if (!empty($username) && !empty($password)) {
             if (loginUser($username, $password, $allUsers)) {
                 header("Location: index.php");
             } else {
-                $showErrorLogin = 
-                "<div class=\"row mt-5 mb-5\">
-                    <div class=\"mx-auto w-50 p-3 text-center opacity-80\">
-                        <p class=\"text-danger\">Username or password incorrect</p>
-                    </div>
-                </div>";
+                $showErrorLogin = layoutSimple("dataIncorrect");
             }
         } else {
-            $showErrorLogin = 
-            "<div class=\"row mt-5 mb-5\">
-                <div class=\"mx-auto w-50 p-3 text-center opacity-80\">
-                    <p class=\"text-danger\">There is any empty field</p>
-                </div>
-            </div>";
+            $showErrorLogin = layoutSimple("emptyField");
         }
     }
 

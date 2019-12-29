@@ -1,44 +1,18 @@
 <?php
 
-//include("..\\database\\databaseOperations.php");
 include("..\\modelo\\costumer.php");
-//include("..\\controlador\\commomFunctions.php");
 include("functions.php");
-/*session_name("sesionUsuario");
-session_start();*/
 
 $showBoxWarning = "";
 
 if (isset($_SESSION["username"])) {
-    $showBoxWarning =
-        "<div class=\"row mt-5\">
-            <div class=\"mx-auto w-50 p-3 text-center opacity-80\">
-                <h1 class=\"mb-0\">WELCOME TO SMALLSHOP</h1>
-                <hr>
-                <p class=\"mb-0\">Choose an option</p>
-                <div class=\"list-group mt-3\">
-                    <form method=\"post\" action=\"\" enctype=\"multipart/form-data\" class=\"needs-validation\">
-                        <button type=\"submit\" class=\"list-group-item list-group-item-action\" name=\"listAllCostumers\">List all costumers</button>
-                        <button type=\"submit\" class=\"list-group-item list-group-item-action\" name=\"getCostumerInformation\">Get full costumer information</button>
-                        <button type=\"submit\" class=\"list-group-item list-group-item-action\" name=\"createCostumer\">Create a new costumer</button>
-                        <button type=\"submit\" class=\"list-group-item list-group-item-action\" name=\"updateCostumer\">Update an existing costumer</button>
-                        <button type=\"submit\" class=\"list-group-item list-group-item-action\" name=\"deleteCostumer\">Delete an existing costumer</button>
-                    </form>
-                </div>
-            </div>
-        </div>";
+    $showBoxWarning = layoutSimple("menu");
 } else {
-    $showBoxWarning =
-        "<div class=\"row mt-5\">
-            <div class=\"mx-auto w-50 p-3 text-center opacity-80\">
-                <p class=\"mb-0\"><span class=\"font-weight-bold\">Sign up</span> and <span class=\"font-weight-bold\">login</span> to use the application.<br>If you have an account, <span class=\"font-weight-bold\">please login</span></p>
-            </div>
-        </div>";
+    $showBoxWarning = layoutSimple("requestLogin");
 }
 
 $allCostumers = listAllCostumers();
 $allUsers = createAllUsers();
-//echo count($allCostumers);
 
 $showBoxProgram = "";
 $showLastNewCostumer = "";
@@ -59,17 +33,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if (isset($_POST["signin"])) {
         if (!(!empty($username) && !empty($password) && !empty($fullname) && !empty($email))) {
-            //registrarUsuario($username, $password, $fullname, $email);
             $showBoxWarning = "";
         }
     }
 
     if (isset($_POST["listAllCostumers"])) {
         $showBoxWarning = "";
-
-        //$showTableDataCostumers = tableAllCostumers($allCostumers);
-        //$showTableDataCostumers = leerTodosPaginacionConBoton(0);
-        $showFormNumberRows = showFormNumberRows($numberRows, $errorNumberRows);
+        $showFormNumberRows = layoutFormUniqueNumericField("showNumberRows", $errorNumberRows);
     }
 
     if (isset($_POST["showTable"])) {
@@ -101,11 +71,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $showTableDataCostumers = leerTodosPaginacionConBoton(0, $numberRows);
         } else {
             $showBoxWarning = "";
-            $showFormNumberRows = showFormNumberRows($numberRows, $errorNumberRows);
+            $showFormNumberRows = layoutFormUniqueNumericField("showNumberRows", $errorNumberRows);
         }
-
-        //$showBoxWarning = "";
-        //$showTableDataCostumers = leerTodosPaginacionConBoton(0);
     }
 
     if (isset($_POST["paginacionAnterior"])) {
@@ -120,24 +87,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if (isset($_POST["getCostumerInformation"])) {
         $showBoxWarning = "";
-
-        $showFormFindCostumer = showFormFindCostumer($number, $errorNumber);
+        $showFormFindCostumer = layoutFormUniqueNumericField("showCustomer", $errorNumber);
     }
 
     if (isset($_POST["findCostumerInformation"])) {
         $showBoxWarning = "";
 
-        if (empty($_POST["numberId"])) {
+        if (empty($_POST["idCustomer"])) {
             $errorNumber = "<p class=\"text-danger\">Campo requerido</p>";
         } else {
-            if (!preg_match("/^[0-9]*$/", $_POST["numberId"])) {
+            if (!preg_match("/^[0-9]*$/", $_POST["idCustomer"])) {
                 $errorNumber = "<p class=\"text-danger\">Formato no correcto. Solo números sin espacios</p>";
             } else {
-                if (strlen(strip_tags($_POST["numberId"])) != strlen($_POST["numberId"])) {
+                if (strlen(strip_tags($_POST["idCustomer"])) != strlen($_POST["idCustomer"])) {
                     $errorNumber = "<p class=\"text-danger\">Incorrect characters</p>";
                 } else {
-                    if ($_POST["numberId"] > 0) {
-                        $number = test_input($_POST["numberId"]);
+                    if ($_POST["idCustomer"] > 0) {
+                        $number = test_input($_POST["idCustomer"]);
                     } else {
                         $errorNumber = "<p class=\"text-danger\">Minimun of lines 1</p>";
                     }
@@ -154,11 +120,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 } else {
                     $allDataSheetsCostumer = "<p class=\"text-danger\">Error: The data was not found</p>";
                 }
-                //$allDataSheetsCostumer = $costumerObject->dataSheetCostumer($allUsers);
             }
 
             $showBoxProgram =
-                "<div class=\"row mt-5\">
+                "<div class=\"row mt-5 mb-5\">
                     <div class=\"mx-auto w-75 p-3 text-center opacity-80\">
                         <h1 class=\"mb-0\">GET FULL CUSTOMER INFORMATION</h1>
                         <hr>
@@ -170,7 +135,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 </div>";
         } else {
             $showBoxWarning = "";
-            $showFormFindCostumer = showFormFindCostumer($number, $errorNumber);
+            $showFormFindCostumer = layoutFormUniqueNumericField("showCustomer", $errorNumber);
         }
     }
 
@@ -222,57 +187,47 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $errorUpload = "<p class=\"text-danger\">Incorrect characters</p>";
             } else {
                 $errorUpload = uploadFile();
-                //$fileUpload = "<img src='../uploads/" . $_FILES["uploadImage"]["name"] . "'>";
                 $fileUpload = $_FILES["uploadImage"]["name"];
             }
         }
 
-        //echo $ficheroSubido;
-
         if (!empty($name) && !empty($surname) && empty($errorUpload)) {
             createNewCostumer($name, $surname, $fileUpload, $_SESSION["idUser"]);
             $allCostumers = listAllCostumers();
-            //$showLastNewCostumer = $allCostumers[count($allCostumers)-1]->dataSheetCostumer($allUsers);
-            //registrarUsuario($username, $password, $fullname, $email);
-
-            //echo "<pre>".print_r($ficheroSubido)."</pre>";
-
-            //$showCostumerInfo = showCostumerInfo($idCostumer, $name, $surname, );
             $showBoxWarning = "";
-            //$showBoxProgram = showBoxCreateCostumer($name, $surname, $errorName, $errorSurname, $errorUpload);
-            $showLastNewCostumer = "<div class=\"row mt-5\">
-            <div class=\"mx-auto w-75 p-3 text-center opacity-80\">
-            <h1 class=\"mb-0\">NEW COSTUMER</h1>"
-                . $allCostumers[count($allCostumers) - 1]->dataSheetCostumer($allUsers) .
-                "<a href=\"\" class=\"btn btn-primary\">Return</a>
-            </div>
+            $showLastNewCostumer = 
+            "<div class=\"row mt-5 mb-5\">
+                <div class=\"mx-auto w-75 p-3 text-center opacity-80\">
+                    <h1 class=\"mb-0\">NEW COSTUMER</h1>"
+                    . $allCostumers[count($allCostumers) - 1]->dataSheetCostumer($allUsers) .
+                    "<a href=\"\" class=\"btn btn-primary\">Return</a>
+                </div>
             </div>";
         } else {
             $showBoxWarning = "";
             $showBoxProgram = showBoxCreateCostumer($name, $surname, $errorName, $errorSurname, $errorUpload);
-            //$registerForm = registerForm($errorUsername, $errorPassword, $errorFullname, $errorEmail, $username, $password, $fullname, $email);
         }
     }
 
     if (isset($_POST["updateCostumer"])) {
         $showBoxWarning = "";
-        $showFormFindCostumer = showFormFindCostumerToUpdate($number, $errorNumber);
+        $showFormFindCostumer = layoutFormUniqueNumericField("updateCustomer", $errorNumber);
     }
 
     if (isset($_POST["findCustomerInformationToUpdate"])) {
         $showBoxWarning = "";
 
-        if (empty($_POST["numberId"])) {
+        if (empty($_POST["idCustomer"])) {
             $errorNumber = "<p class=\"text-danger\">Campo requerido</p>";
         } else {
-            if (!preg_match("/^[0-9]*$/", $_POST["numberId"])) {
+            if (!preg_match("/^[0-9]*$/", $_POST["idCustomer"])) {
                 $errorNumber = "<p class=\"text-danger\">Formato no correcto. Solo números sin espacios</p>";
             } else {
-                if (strlen(strip_tags($_POST["numberId"])) != strlen($_POST["numberId"])) {
+                if (strlen(strip_tags($_POST["idCustomer"])) != strlen($_POST["idCustomer"])) {
                     $errorNumber = "<p class=\"text-danger\">Incorrect characters</p>";
                 } else {
-                    if ($_POST["numberId"] > 0) {
-                        $number = test_input($_POST["numberId"]);
+                    if ($_POST["idCustomer"] > 0) {
+                        $number = test_input($_POST["idCustomer"]);
                     } else {
                         $errorNumber = "<p class=\"text-danger\">Minimun of lines 1</p>";
                     }
@@ -289,30 +244,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 } else {
                     $errorNumber = "<p class=\"text-danger\">Error: The data was not found</p>";
                 }
-                //$allDataSheetsCostumer = $costumerObject->dataSheetCostumer($allUsers);
             }
 
             if (!empty($customer)) {
-
                 $showFormUpdateCustomer = showFormUpdateCustomer($customer, $errorIdCustomer, $errorName, $errorSurname, $errorUpload);
-                /*$showBoxProgram =
-                    "<div class=\"row mt-5\">
-                    <div class=\"mx-auto w-75 p-3 text-center opacity-80\">
-                        <h1 class=\"mb-0\">GET FULL CUSTOMER INFORMATION</h1>
-                        <hr>
-                        " . $allDataSheetsCostumer . "
-                        <div class=\"d-flex justify-content-around mt-3\">
-                            <a href=\"\" class=\"btn btn-primary\">Return</a>
-                        </div>
-                    </div>
-                </div>";*/
             } else {
                 $showBoxWarning = "";
-                $showFormFindCostumer = showFormFindCostumerToUpdate($number, $errorNumber);
+                $showFormFindCostumer = layoutFormUniqueNumericField("updateCustomer", $errorNumber);
             }
         } else {
             $showBoxWarning = "";
-            $showFormFindCostumer = showFormFindCostumerToUpdate($number, $errorNumber);
+            $showFormFindCostumer = layoutFormUniqueNumericField("updateCustomer", $errorNumber);
         }
     }
 
@@ -335,7 +277,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         } else {
                             $errorIdCustomer = "<p class=\"text-danger\">There is that ID customer, choose any other</p>";
                         }
-                        //$idCustomer = test_input($_POST["idCustomer"]);
                     } else {
                         $errorIdCustomer = "<p class=\"text-danger\">Minimun ID is 1</p>";
                     }
@@ -390,18 +331,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $errorUpload = "<p class=\"text-danger\">Incorrect characters</p>";
             } else {
                 $errorUpload = uploadFile();
-                //$fileUpload = "<img src='../uploads/" . $_FILES["uploadImage"]["name"] . "'>";
                 $fileUpload = $_FILES["uploadImage"]["name"];
             }
         }
-
-        //echo $_FILES["uploadImage"]["name"];
-        //echo $_POST["uploadImageHidden"];
-        /*if (isset($_POST["checkboxDeleteImage"])) {
-            $checkboxDeleteImage = $_POST["checkboxDeleteImage"];
-        } else {
-
-        }*/
         
         $imageHidden = $_POST["uploadImageHidden"];
         $idCustomerHidden = $_POST["idCustomerHidden"];
@@ -421,12 +353,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
 
             $showBoxWarning = "";
-            $showUpdateCustomer = "<div class=\"row mt-5\">
-            <div class=\"mx-auto w-75 p-3 text-center opacity-80\">
-            <h1 class=\"mb-0\">UPDATE CUSTOMER</h1>"
-                . $customer->dataSheetCostumer($allUsers) .
-                "<a href=\"\" class=\"btn btn-primary\">Return</a>
-            </div>
+            $showUpdateCustomer =
+            "<div class=\"row mt-5 mb-5\">
+                <div class=\"mx-auto w-75 p-3 text-center opacity-80\">
+                    <h1 class=\"mb-0\">UPDATE CUSTOMER</h1>"
+                    . $customer->dataSheetCostumer($allUsers) .
+                    "<a href=\"\" class=\"btn btn-primary\">Return</a>
+                </div>
             </div>";
         } else {
             $customer = "";
@@ -442,7 +375,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if (isset($_POST["deleteCostumer"])) {
         $showBoxWarning = "";
-        $showFormFindCostumer = showFormFindCostumerToDelete($idCustomer, $errorIdCustomer);
+        $showFormFindCostumer = layoutFormUniqueNumericField("deleteCustomer", $errorIdCustomer);
     }
 
     if (isset($_POST["findCustomerInformationToDelete"])) {
@@ -461,7 +394,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                         } else {
                             $errorIdCustomer = "<p class=\"text-danger\">There isn´t that ID customer, choose any other</p>";
                         }
-                        //$idCustomer = test_input($_POST["idCustomer"]);
                     } else {
                         $errorIdCustomer = "<p class=\"text-danger\">Minimun ID is 1</p>";
                     }
@@ -476,7 +408,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $allCostumers = $allCustomers;
         } else {
             $showBoxWarning = "";
-            $showFormFindCostumer = showFormFindCostumerToDelete($idCustomer, $errorIdCustomer);
+            $showFormFindCostumer = layoutFormUniqueNumericField("deleteCustomer", $errorIdCustomer);
         }
     }
 }

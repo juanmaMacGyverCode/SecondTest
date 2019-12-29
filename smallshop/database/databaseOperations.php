@@ -4,28 +4,16 @@ include("conexion.php");
 
 function createAllUsers()
 {
-
     $allUsers = array();
-
     $mysqli = connection();
-
     $sql = "SELECT idUser, username, pass, fullName, email FROM users";
     if ($query = $mysqli->query($sql)) {
         while ($row = $query->fetch_assoc()) {
-            //echo $row["username"] . "<br>";
-            /*echo $row["idUser"] . "<br>";
-            echo decrypt($row["username"], "1235@") . "<br>";
-            echo decrypt($row["pass"], "1235@") . "<br>";
-            echo decrypt($row["fullName"], "1235@") . "<br>";
-            echo decrypt($row["email"], "1235@") . "<br>";*/
-
             $newUser = new User($row["idUser"], $row["username"], $row["pass"], $row["fullName"], $row["email"]);
             array_push($allUsers, $newUser);
         }
     }
-
     $mysqli->close();
-
     return $allUsers;
 }
 
@@ -45,7 +33,6 @@ function registrarUsuario($username, $password, $fullname, $email)
     $email = encrypt($email, "1235@");
 
     $prepareStatement = $mysqli->stmt_init();
-    //AES_ENCRYPT('$contrasena', UNHEX('F3229A0B371ED2D9441B830D21A390C3'))
     $prepareStatement->prepare("INSERT INTO users (username, pass, fullName, email) VALUES (?, ?, ?, ?)");
     $prepareStatement->bind_param("ssss", $username, $password, $fullname, $email);
     if ($prepareStatement->execute()) {
@@ -64,18 +51,12 @@ function createNewCostumer($name, $surname, $fileUpload, $idUser)
 
     $mysqli = connection();
 
-    //if (!empty($fileUpload)) {
-    //$fileUpload = $mysqli->real_escape_string($fileUpload);
-
     $name = $mysqli->real_escape_string($name);
     $surname = $mysqli->real_escape_string($surname);
-    //$fileUpload = $mysqli->real_escape_string($fileUpload);
     $idUser = $mysqli->real_escape_string($idUser);
 
     $name = encrypt($name, "1235@");
     $surname = encrypt($surname, "1235@");
-    //$fileUpload = encrypt($fileUpload, "1235@");
-    //$idUser = encrypt($idUser, "1235@");
 
     $prepareStatement = $mysqli->stmt_init();
 
@@ -97,7 +78,6 @@ function createNewCostumer($name, $surname, $fileUpload, $idUser)
     }
 
     $prepareStatement->close();
-
     $mysqli->close();
 }
 
