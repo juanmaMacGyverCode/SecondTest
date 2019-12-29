@@ -83,7 +83,7 @@ function showLoginRegisterLogout($user)
         $showMenuLogin = "<input class=\"form-control mr-sm-2\" type=\"text\" name=\"usernameLogin\" placeholder=\"Username\" aria-label=\"Search\">
                 <input class=\"form-control mr-sm-2\" type=\"text\" name=\"passwordLogin\" placeholder=\"Password\" aria-label=\"Search\">
                 <input class=\"btn btn-outline-success my-2 my-sm-0 mr-sm-2\" type=\"submit\" name=\"login\" aria-label=\"Login\" value=\"Login\">
-                <input class=\"btn btn-outline-success my-2 my-sm-0\" type=\"submit\" name=\"registerForm\" aria-label=\"Registrar\" value=\"Registrar\">";
+                <input class=\"btn btn-outline-success my-2 my-sm-0\" type=\"submit\" name=\"registerForm\" aria-label=\"Sign in\" value=\"Sign in\">";
     }
     return $showMenuLogin;
 }
@@ -135,7 +135,9 @@ function showMenuAdministrator($administrator)
 
 function registerForm($errorUsername, $errorPassword, $errorFullname, $errorEmail, $username, $password, $fullname, $email) {
     $registerForm =
-        "<div class=\"w-50 p-3\"><form method=\"post\" action=\"\" enctype=\"multipart/form-data\" class=\"needs-validation\" novalidate>
+        "<div class=\"row w-100 mt-5 mb-5\">
+        <div class=\"mx-auto w-50 p-3 text-center opacity-80\">
+        <form method=\"post\" action=\"\" enctype=\"multipart/form-data\" class=\"needs-validation\" novalidate>
             <h1>FORMULARIO DE REGISTRO</h1>
             <div class=\"form-group\">
                 <label for=\"username\">Username</label>
@@ -181,12 +183,12 @@ function registerForm($errorUsername, $errorPassword, $errorFullname, $errorEmai
                 </div>
                 $errorEmail
             </div>
-            <div class=\"form-group row\">
-                <div class=\"col-sm-10\">
-                    <button type=\"submit\" class=\"btn btn-primary\" name=\"signin\">Sign in</button>
-                </div>
+            <div class=\"d-flex justify-content-around\">
+                <button type=\"submit\" class=\"btn btn-primary\" name=\"signin\">Sign in</button><a href=\"\" class=\"btn btn-primary\">Return</a>
             </div>
-        </form></div>";
+        </form>
+        </div>
+        </div>";
 
         return $registerForm;
 }
@@ -217,9 +219,11 @@ function loginUser($username, $password, $allUsers)
     foreach ($allUsers as $user) {
         if ($username == decrypt($user->getUsername(), "1235@") && $password == decrypt($user->getPassword(), "1235@")) {
             newSession($user->getIdUser(), $user->getUsername(), $user->getPassword(), $user->getFullName(), $user->getEmail());
-            return;
+            return true;
         }
     }
+
+    return false;
 }
 
 function newSession($idUser ,$userEncrypt, $passwordEncrypt, $fullNameEncrypt, $emailEncrypt) {

@@ -205,7 +205,7 @@ function showFormUpdateCustomer($customer, $errorIdCustomer, $errorName, $errorS
 
     //echo "<img src=\"../uploads/" . decrypt($customer->getImage(), "1235@") . "\">";
 
-        return "<div class=\"row w-100 mt-5\">
+        return "<div class=\"row w-100 mt-5 mb-5\">
             <div class=\"mx-auto w-50 p-3 text-center opacity-80\">
                 <h1 class=\"mb-0\">CREATE A NEW COSTUMER</h1>
                 <hr>
@@ -240,4 +240,36 @@ function showFormUpdateCustomer($customer, $errorIdCustomer, $errorName, $errorS
                 </div>
             </div>
         </div>";
+}
+
+function thereIsThatID($idCustomer, $allCustomers) 
+{
+    foreach ($allCustomers as $customerObject) {
+        if ($idCustomer == $customerObject->getIdCostumer()) {
+            return false;
+        }
     }
+    return true;
+}
+
+function showFormFindCostumerToDelete($idCustomer, $errorIdCustomer) 
+{
+    return "<div class=\"row w-100 mt-5\">
+            <div class=\"mx-auto w-50 p-3 text-center opacity-80\">
+                <h1 class=\"mb-0\">DELETE A CUSTOMER</h1>
+                <hr>
+                <div class=\"list-group mt-3\">
+                    <form method=\"post\" action=\"\" enctype=\"multipart/form-data\" class=\"needs-validation\">
+                        <div class=\"form-group col-md-6 mx-auto\">
+                            <label for=\"idCustomer\">Which customer do you want to look for to delete? Only numbers</label>
+                            <input type=\"number\" class=\"form-control\" id=\"idCustomer\" name=\"idCustomer\" value=\"" . $idCustomer . "\" placeholder=\"1\">
+                            " . $errorIdCustomer . "
+                        </div>
+                        <div class=\"d-flex justify-content-around\">
+                            <button type=\"submit\" class=\"btn btn-primary\" name=\"findCustomerInformationToDelete\">Delete customer</button><a href=\"\" class=\"btn btn-primary\">Return</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>";
+}

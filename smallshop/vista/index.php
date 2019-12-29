@@ -35,6 +35,7 @@
         </div>
     </nav>
 
+    <?php echo $showErrorLogin; ?>
     <?php echo $showBoxWarning; ?>
     <?php echo $showBoxProgram; ?>
     <?php echo $showFormNumberRows; ?>

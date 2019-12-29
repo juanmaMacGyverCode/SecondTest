@@ -232,3 +232,25 @@ function updateCustomer($idCustomerHidden, $idCustomer, $name, $surname, $fileUp
 
     $mysqli->close();
 }
+
+function deleteCustomer($idCustomer) {
+
+    $mysqli = connection();
+
+    $idCustomer = $mysqli->real_escape_string($idCustomer);
+
+    $prepareStatement = $mysqli->stmt_init();
+
+    $prepareStatement->prepare("DELETE FROM costumers WHERE idCostumer=?");
+    $prepareStatement->bind_param("i", $idCustomer);
+
+    if ($prepareStatement->execute()) {
+        echo "Update";
+    } else {
+        echo "Error en el registro";
+    }
+
+    $prepareStatement->close();
+
+    $mysqli->close();
+}

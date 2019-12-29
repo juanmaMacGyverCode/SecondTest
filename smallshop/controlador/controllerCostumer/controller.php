@@ -13,9 +13,9 @@ if (isset($_SESSION["username"])) {
     $showBoxWarning =
         "<div class=\"row mt-5\">
             <div class=\"mx-auto w-50 p-3 text-center opacity-80\">
-                <h1 class=\"mb-0\">BIENVENIDO.</h1>
+                <h1 class=\"mb-0\">WELCOME TO SMALLSHOP</h1>
                 <hr>
-                <p class=\"mb-0\">¿Qué desea hacer?</p>
+                <p class=\"mb-0\">Choose an option</p>
                 <div class=\"list-group mt-3\">
                     <form method=\"post\" action=\"\" enctype=\"multipart/form-data\" class=\"needs-validation\">
                         <button type=\"submit\" class=\"list-group-item list-group-item-action\" name=\"listAllCostumers\">List all costumers</button>
@@ -30,10 +30,10 @@ if (isset($_SESSION["username"])) {
 } else {
     $showBoxWarning =
         "<div class=\"row mt-5\">
-        <div class=\"mx-auto w-50 p-3 text-center opacity-80\">
-                <p class=\"mb-0\">Registrese y haga login para usar la aplicación.</p>
-        </div>
-    </div>";
+            <div class=\"mx-auto w-50 p-3 text-center opacity-80\">
+                <p class=\"mb-0\"><span class=\"font-weight-bold\">Sign up</span> and <span class=\"font-weight-bold\">login</span> to use the application.<br>If you have an account, <span class=\"font-weight-bold\">please login</span></p>
+            </div>
+        </div>";
 }
 
 $allCostumers = listAllCostumers();
@@ -48,10 +48,21 @@ $showFormFindCostumer = "";
 $showFormUpdateCustomer = "";
 $showUpdateCustomer = "";
 
-$name = $surname = $fileUpload = $numberRows = $number = $checkboxDeleteImage = $idCustumer = "";
+$name = $surname = $fileUpload = $numberRows = $number = $checkboxDeleteImage = $idCustomer = "";
 $errorName = $errorSurname = $errorUpload = $errorNumberRows = $errorNumber = $errorIdCustomer = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
+    if (isset($_POST["registerForm"])) {
+        $showBoxWarning = "";
+    }
+
+    if (isset($_POST["signin"])) {
+        if (!(!empty($username) && !empty($password) && !empty($fullname) && !empty($email))) {
+            //registrarUsuario($username, $password, $fullname, $email);
+            $showBoxWarning = "";
+        }
+    }
 
     if (isset($_POST["listAllCostumers"])) {
         $showBoxWarning = "";
@@ -307,6 +318,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if (isset($_POST["buttonUpdateCustomer"])) {
 
+        $idCustomerHidden = $_POST["idCustomerHidden"];
+
         if (empty($_POST["idCustomer"])) {
             $errorIdCustomer = "<p class=\"text-danger\">Campo requerido</p>";
         } else {
@@ -317,7 +330,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     $errorIdCustomer = "<p class=\"text-danger\">Incorrect characters</p>";
                 } else {
                     if ($_POST["idCustomer"] > 0) {
-                        $idCustomer = test_input($_POST["idCustomer"]);
+                        if ($idCustomerHidden == $_POST["idCustomer"] || thereIsThatID($_POST["idCustomer"], $allCostumers)) {
+                            $idCustomer = test_input($_POST["idCustomer"]);
+                        } else {
+                            $errorIdCustomer = "<p class=\"text-danger\">There is that ID customer, choose any other</p>";
+                        }
+                        //$idCustomer = test_input($_POST["idCustomer"]);
                     } else {
                         $errorIdCustomer = "<p class=\"text-danger\">Minimun ID is 1</p>";
                     }
@@ -388,10 +406,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $imageHidden = $_POST["uploadImageHidden"];
         $idCustomerHidden = $_POST["idCustomerHidden"];
 
-        echo $idCustomer;
-        echo $name;
-        echo $surname;
-        //echo $checkboxDeleteImage;
 
         if ((!empty($idCustomer) && !empty($name) && !empty($surname)) || !empty($fileUpload) || !empty($checkboxDeleteImage)) {
             updateCustomer($idCustomerHidden, $idCustomer, $name, $surname, $fileUpload, $checkboxDeleteImage, $_SESSION["idUser"]);
@@ -428,22 +442,41 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if (isset($_POST["deleteCostumer"])) {
         $showBoxWarning = "";
-        $showBoxProgram =
-            "<div class=\"row mt-5\">
-            <div class=\"mx-auto w-50 p-3 text-center opacity-80\">
-                <h1 class=\"mb-0\">BIENVENIDO.</h1>
-                <hr>
-                <p class=\"mb-0\">¿Qué desea hacer?</p>
-                <div class=\"list-group mt-3\">
-                    <form method=\"post\" action=\"\" enctype=\"multipart/form-data\" class=\"needs-validation\">
-                        <button type=\"submit\" class=\"list-group-item list-group-item-action\" name=\"listAllCostumers\">List all costumers</button>
-                        <button type=\"submit\" class=\"list-group-item list-group-item-action\" name=\"getCostumberInformation\">Get full costumer information</button>
-                        <button type=\"submit\" class=\"list-group-item list-group-item-action\" name=\"createCostumer\">Create a new costumer</button>
-                        <button type=\"submit\" class=\"list-group-item list-group-item-action\" name=\"updateCostumer\">Update an existing costumer</button>
-                        <button type=\"submit\" class=\"list-group-item list-group-item-action\" name=\"deleteCostumer\">Delete an existing costumer</button>
-                    </form>
-                </div>
-            </div>
-        </div>";
+        $showFormFindCostumer = showFormFindCostumerToDelete($idCustomer, $errorIdCustomer);
+    }
+
+    if (isset($_POST["findCustomerInformationToDelete"])) {
+        if (empty($_POST["idCustomer"])) {
+            $errorIdCustomer = "<p class=\"text-danger\">Campo requerido</p>";
+        } else {
+            if (!preg_match("/^[0-9]*$/", $_POST["idCustomer"])) {
+                $errorIdCustomer = "<p class=\"text-danger\">Formato no correcto. Solo números sin espacios</p>";
+            } else {
+                if (strlen(strip_tags($_POST["idCustomer"])) != strlen($_POST["idCustomer"])) {
+                    $errorIdCustomer = "<p class=\"text-danger\">Incorrect characters</p>";
+                } else {
+                    if ($_POST["idCustomer"] > 0) {
+                        if (!thereIsThatID($_POST["idCustomer"], $allCostumers)) {
+                            $idCustomer = test_input($_POST["idCustomer"]);
+                        } else {
+                            $errorIdCustomer = "<p class=\"text-danger\">There isn´t that ID customer, choose any other</p>";
+                        }
+                        //$idCustomer = test_input($_POST["idCustomer"]);
+                    } else {
+                        $errorIdCustomer = "<p class=\"text-danger\">Minimun ID is 1</p>";
+                    }
+                }
+            }
+        }
+
+        if (!empty($idCustomer)) {
+            deleteCustomer($idCustomer);
+
+            $allCustomers = listAllCostumers();
+            $allCostumers = $allCustomers;
+        } else {
+            $showBoxWarning = "";
+            $showFormFindCostumer = showFormFindCostumerToDelete($idCustomer, $errorIdCustomer);
+        }
     }
 }
