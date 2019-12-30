@@ -112,17 +112,29 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
 
         if (!empty($number)) {
-            $allDataSheetsCostumer = "";
+            //$allDataSheetsCostumer = "";
+            $thereIsData = false;
+            $customer = "";
             foreach ($allCostumers as $costumerObject) {
                 if ($number == $costumerObject->getIdCostumer()) {
-                    $allDataSheetsCostumer = $costumerObject->dataSheetCostumer($allUsers);
+                    $customer = $costumerObject;
+                    $thereIsData = true;
+                    //$allDataSheetsCostumer = $costumerObject->dataSheetCostumer($allUsers);
                     break;
-                } else {
-                    $allDataSheetsCostumer = "<p class=\"text-danger\">Error: The data was not found</p>";
-                }
+                } //else {
+                    //$allDataSheetsCostumer = "<p class=\"text-danger\">Error: The data was not found</p>";
+
+                    // NO TIENE SENTIDO REPETIR LA MISMA ACCION 1212412125 VECES
+                    //$showBoxProgram = layoutSimple("dataNotFound");
+                //}
             }
 
-            $showBoxProgram =
+            if ($thereIsData) {
+                $showBoxProgram = layoutDataSheetCustomer("getFullCustomerInformation", $customer, $allUsers);
+            } else {
+                $showBoxProgram = layoutSimple("dataNotFound");
+            }
+            /*$showBoxProgram =
                 "<div class=\"row mt-5 mb-5\">
                     <div class=\"mx-auto w-75 p-3 text-center opacity-80\">
                         <h1 class=\"mb-0\">GET FULL CUSTOMER INFORMATION</h1>
@@ -132,7 +144,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <a href=\"\" class=\"btn btn-primary\">Return</a>
                         </div>
                     </div>
-                </div>";
+                </div>";*/
         } else {
             $showBoxWarning = "";
             $showFormFindCostumer = layoutFormUniqueNumericField("showCustomer", $errorNumber);
@@ -195,14 +207,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             createNewCostumer($name, $surname, $fileUpload, $_SESSION["idUser"]);
             $allCostumers = listAllCostumers();
             $showBoxWarning = "";
-            $showLastNewCostumer = 
+            $showLastNewCostumer = layoutDataSheetCustomer("newCustomer", $allCostumers[count($allCostumers) - 1], $allUsers);
+            /*$showLastNewCostumer = 
             "<div class=\"row mt-5 mb-5\">
                 <div class=\"mx-auto w-75 p-3 text-center opacity-80\">
                     <h1 class=\"mb-0\">NEW COSTUMER</h1>"
                     . $allCostumers[count($allCostumers) - 1]->dataSheetCostumer($allUsers) .
                     "<a href=\"\" class=\"btn btn-primary\">Return</a>
                 </div>
-            </div>";
+            </div>";*/
         } else {
             $showBoxWarning = "";
             $showBoxProgram = showBoxCreateCostumer($name, $surname, $errorName, $errorSurname, $errorUpload);
@@ -260,9 +273,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if (isset($_POST["buttonUpdateCustomer"])) {
 
-        $idCustomerHidden = $_POST["idCustomerHidden"];
+        //$idCustomerHidden = $_POST["idCustomerHidden"];
 
-        if (empty($_POST["idCustomer"])) {
+        /*if (empty($_POST["idCustomer"])) {
             $errorIdCustomer = "<p class=\"text-danger\">Campo requerido</p>";
         } else {
             if (!preg_match("/^[0-9]*$/", $_POST["idCustomer"])) {
@@ -272,17 +285,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     $errorIdCustomer = "<p class=\"text-danger\">Incorrect characters</p>";
                 } else {
                     if ($_POST["idCustomer"] > 0) {
-                        if ($idCustomerHidden == $_POST["idCustomer"] || thereIsThatID($_POST["idCustomer"], $allCostumers)) {
+                        //if ($idCustomerHidden == $_POST["idCustomer"] || thereIsThatID($_POST["idCustomer"], $allCostumers)) {
                             $idCustomer = test_input($_POST["idCustomer"]);
-                        } else {
-                            $errorIdCustomer = "<p class=\"text-danger\">There is that ID customer, choose any other</p>";
-                        }
+                        //} else {
+                            //$errorIdCustomer = "<p class=\"text-danger\">There is that ID customer, choose any other</p>";
+                        //}
                     } else {
                         $errorIdCustomer = "<p class=\"text-danger\">Minimun ID is 1</p>";
                     }
                 }
             }
-        }
+        }*/
+
+        $idCustomer = test_input($_POST["idCustomer"]);
 
         if (empty($_POST["name"])) {
             $errorName = "<p class=\"text-danger\">Campo requerido</p>";
@@ -336,11 +351,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
         
         $imageHidden = $_POST["uploadImageHidden"];
-        $idCustomerHidden = $_POST["idCustomerHidden"];
+        //$idCustomerHidden = $_POST["idCustomerHidden"];
 
 
         if ((!empty($idCustomer) && !empty($name) && !empty($surname)) || !empty($fileUpload) || !empty($checkboxDeleteImage)) {
-            updateCustomer($idCustomerHidden, $idCustomer, $name, $surname, $fileUpload, $checkboxDeleteImage, $_SESSION["idUser"]);
+            updateCustomer($idCustomer, $name, $surname, $fileUpload, $checkboxDeleteImage, $_SESSION["idUser"]);
 
             $allCustomers = listAllCostumers();
             $allCostumers = $allCustomers;
@@ -353,18 +368,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
 
             $showBoxWarning = "";
-            $showUpdateCustomer =
+            $showUpdateCustomer = layoutDataSheetCustomer("updateCustomer", $customer, $allUsers);
+            /*$showUpdateCustomer =
             "<div class=\"row mt-5 mb-5\">
                 <div class=\"mx-auto w-75 p-3 text-center opacity-80\">
                     <h1 class=\"mb-0\">UPDATE CUSTOMER</h1>"
                     . $customer->dataSheetCostumer($allUsers) .
                     "<a href=\"\" class=\"btn btn-primary\">Return</a>
                 </div>
-            </div>";
+            </div>";*/
         } else {
             $customer = "";
             foreach ($allCostumers as $customerObject) {
-                if ($customerObject->getIdCostumer() == $idCustomerHidden) {
+                if ($customerObject->getIdCostumer() == $idCustomer) {
                     $customer = $customerObject;
                 }
             }

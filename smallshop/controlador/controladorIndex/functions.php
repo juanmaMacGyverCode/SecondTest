@@ -146,3 +146,13 @@ function sessionDestroy()
     session_destroy();
     header("Location: index.php");
 }
+
+function userExists($username, $allUsers) {
+
+    foreach ($allUsers as $user) {
+        if (decrypt($user->getUsername(), "1235@") == $username) {
+            return true;
+        }
+    }
+    return false;
+}

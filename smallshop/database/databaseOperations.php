@@ -173,7 +173,7 @@ function leerTodosPaginacionConBoton($valor, $numberRow)
     return $consultaToda;
 }
 
-function updateCustomer($idCustomerHidden, $idCustomer, $name, $surname, $fileUpload, $checkboxDeleteImage, $idUser)
+function updateCustomer($idCustomer, $name, $surname, $fileUpload, $checkboxDeleteImage, $idUser)
 {
 
     $mysqli = connection();
@@ -194,11 +194,11 @@ function updateCustomer($idCustomerHidden, $idCustomer, $name, $surname, $fileUp
         if (!empty($fileUpload)) {
             $fileUpload = $mysqli->real_escape_string($fileUpload);
             $fileUpload = encrypt($fileUpload, "1235@");
-            $prepareStatement->prepare("UPDATE costumers SET idCostumer=?, nameCostumer=?, surname=?, imageName=?, idUserLastModify=? WHERE idCostumer=?");
-            $prepareStatement->bind_param("isssii", $idCustomer, $name, $surname, $fileUpload, $idUser, $idCustomerHidden);
+            $prepareStatement->prepare("UPDATE costumers SET nameCostumer=?, surname=?, imageName=?, idUserLastModify=? WHERE idCostumer=?");
+            $prepareStatement->bind_param("sssii", $name, $surname, $fileUpload, $idUser, $idCustomer);
         } else {
-            $prepareStatement->prepare("UPDATE costumers SET idCostumer=?, nameCostumer=?, surname=?, idUserLastModify=? WHERE idCostumer=?");
-            $prepareStatement->bind_param("issii", $idCustomer, $name, $surname, $idUser, $idCustomerHidden);
+            $prepareStatement->prepare("UPDATE costumers SET nameCostumer=?, surname=?, idUserLastModify=? WHERE idCostumer=?");
+            $prepareStatement->bind_param("ssii", $name, $surname, $idUser, $idCustomer);
         }
     }
 

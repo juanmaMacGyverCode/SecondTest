@@ -48,7 +48,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     if (strlen(strip_tags($_POST["username"])) != strlen($_POST["username"])) {
                         $errorUsername = "<p class=\"text-danger\">Incorrect characters</p>";
                     } else {
-                        $username = test_input($_POST["username"]);
+                        if (userExists($_POST["username"], $allUsers)) {
+                            $errorUsername = "<p class=\"text-danger\">The username already exists, please choose another</p>";
+                        } else {
+                            $username = test_input($_POST["username"]);
+                        }
                     }
                 }
             }

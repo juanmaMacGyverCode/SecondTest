@@ -81,8 +81,7 @@ function showFormUpdateCustomer($customer, $errorIdCustomer, $errorName, $errorS
                     <form method=\"post\" action=\"\" enctype=\"multipart/form-data\" class=\"needs-validation\">
                         <div class=\"form-group col-md-6 mx-auto\">
                             <label for=\"idCustomer\">ID customer</label>
-                            <input type=\"hidden\" class=\"form-control\" id=\"idCustomer\" name=\"idCustomerHidden\" value=\"" . $customer->getIdCostumer() . "\" placeholder=\"Name\">
-                            <input type=\"text\" class=\"form-control\" id=\"idCustomer\" name=\"idCustomer\" value=\"" . $customer->getIdCostumer() . "\" placeholder=\"Name\">".
+                            <input type=\"text\" class=\"form-control\" id=\"idCustomer\" name=\"idCustomer\" value=\"" . $customer->getIdCostumer() . "\" readonly>".
                             $errorIdCustomer
                         . "</div>
                         <div class=\"form-group col-md-6 mx-auto\">

@@ -24,6 +24,8 @@ function requestSimple($option) {
         return "<p class=\"text-danger\">There is any empty field</p>";
     } else if ($option == "requestLogin") {
         return "<p class=\"mb-0\"><span class=\"font-weight-bold\">Sign up</span> and <span class=\"font-weight-bold\">login</span> to use the application.<br>If you have an account, <span class=\"font-weight-bold\">please login</span></p>";
+    } else if ($option == "dataNotFound") {
+        return "<p class=\"text-danger\">Error: The data was not found</p><div class=\"d-flex justify-content-around mt-3 mb-3\"><a href=\"\" class=\"btn btn-primary\">Return</a></div>";
     } else if ($option == "menu") {
         return "<h1 class=\"mb-0\">WELCOME TO SMALLSHOP</h1>
                 <hr>
@@ -98,5 +100,37 @@ function requestFormUniqueNumericField($option, $errorNumber) {
         ];
     } else {
         return ["PROGRAMMING ERROR", "PROGRAMMING ERROR", "PROGRAMMING ERROR"];
+    }
+}
+
+function layoutDataSheetCustomer($option, $customer, $allUsers)
+{
+    //$request = requestDataSheetCustomer($option);
+
+    return "<div class=\"row mt-5 mb-5\">
+                <div class=\"mx-auto w-75 p-3 text-center opacity-80\">
+
+                    " . requestDataSheetCustomer($option) . "
+
+                    <hr>
+                    " . $customer->dataSheetCostumer($allUsers) . " 
+                    <div class=\"d-flex justify-content-around mt-3\">
+                        <a href=\"\" class=\"btn btn-primary\">Return</a>
+                    </div>
+                </div>
+            </div>";
+}
+
+function requestDataSheetCustomer($option)
+{
+
+    if ($option == "getFullCustomerInformation") {
+        return "<h1 class=\"mb-0\">GET FULL CUSTOMER INFORMATION</h1>";
+    } else if ($option == "newCustomer") {
+        return "<h1 class=\"mb-0\">NEW COSTUMER</h1>";
+    } else if ($option == "updateCustomer") {
+        return "<h1 class=\"mb-0\">UPDATE CUSTOMER</h1>";
+    } else {
+        return "PROGRAMMING ERROR";
     }
 }
